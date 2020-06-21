@@ -16,12 +16,11 @@ class CreateNewQuiz(serializers.ModelSerializer):
     
     class Meta:
         model = Quiz
-        fields = ['quiz_id' ,'quiz_headline', 'quiz_grade', 'quiz_real_time', 'quiz_setion_time', 'quiz_launch_time', 'quiz_is_launched']
-        read_only_fields = ['quiz_id', 'quiz_real_time', 'quiz_setion_time', 'quiz_launch_time', 'quiz_is_launched']
+        fields = ['id', 'quiz_id' ,'quiz_headline', 'quiz_grade', 'quiz_real_time', 'quiz_setion_time', 'quiz_launch_time', 'quiz_is_launched']
+        read_only_fields = ['quiz_headline', 'id', 'quiz_id', 'quiz_real_time', 'quiz_setion_time', 'quiz_launch_time', 'quiz_is_launched']
 
     def save(self, subject, author, quiz_id, **kwargs):
         quiz = Quiz(
-            quiz_headline = self.validated_data['quiz_headline'],
             quiz_grade = self.validated_data['quiz_grade']
         )
 

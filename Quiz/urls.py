@@ -1,6 +1,6 @@
 from django.urls import path
 from Quiz.student.views import listAllStudentQuizs, quizResponse, checkQuizTime
-from Quiz.teacher.views import newQuiz, appendQuestionsToQuiz, listQuestions, saveQuiz, launchQuiz, listLaunchedQuiz, listUnLaunchedQuiz, detailQuiz, createQuestion, createQuestion2, createRate, viewRates, listTeacherQuestions, listNotTeacherQuestions
+from Quiz.teacher.views import newQuiz, listQuestions, saveQuiz, launchQuiz, listLaunchedQuiz, listUnLaunchedQuiz, detailQuiz, createQuestion, createQuestion2, createRate, viewRates, listTeacherQuestions, listNotTeacherQuestions, filteration
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -11,7 +11,8 @@ urlpatterns = [
     # 
     path('quiz/teacher/create/', newQuiz, name='quizTeacherCreate'),
     path('quiz/teacher/questions/list/', listQuestions, name='QuestionsList'),
-    path('quiz/teacher/append/', appendQuestionsToQuiz, name='quizTeacherAppend'),
+    path('quiz/filter/questions/', filteration, name='filteration'),
+    # path('quiz/teacher/append/', appendQuestionsToQuiz, name='quizTeacherAppend'),
     path('quiz/teacher/save/<int:quiz_id>/', saveQuiz, name='quizTeacherSave'),
     path('quiz/teacher/launch/<int:quiz_id>/<str:quiz_launch_time>/<str:quiz_class_room>/', launchQuiz, name='quizTeacherLaunch'),
     path('quiz/teacher/list/launched/', listLaunchedQuiz, name='quizTeacherListLaunched'),

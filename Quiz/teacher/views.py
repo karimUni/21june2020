@@ -28,35 +28,38 @@ def newQuiz(request):
     user = request.user
     teacher = get_object_or_404(Teacher, user=user)
     serializer = CreateNewQuiz(data=request.data)
+    questions = request.data.get('questions')
+    usedQuestions = questions.split('&')
     if serializer.is_valid():
         quiz_id = int(random.random()*1000)
         new_serializer = serializer.save(subject=teacher.subject.name, author=user, quiz_id=quiz_id)
+        for q in usedQuestions:
+            theSpecificQuestion = get_object_or_404(Question, id=int(q))
+            new_serializer.quiz_questions.add(theSpecificQuestion)
         return Response({
-            'id': quiz_id,
-            'quiz_headline': serializer.data['quiz_headline'],
-            'quiz_grade': serializer.data['quiz_grade']
-        })
+            'id': new_serializer.id,
+        }, 200)
     else:
-        return Response(serializer.errors)
+        return Response({'error': serializer.errors}, 403)
 
 
-# 2
-@api_view(['POST'])
-@teacher_role
-def appendQuestionsToQuiz(request):
-    user = request.user
-    quiz_id = request.data.get('quiz_id')
-    quiz_data = request.data.get('quiz_data')
-    teacher = get_object_or_404(Teacher, user=user)
-    myData = quiz_data.split('&')
-    quiz = get_object_or_404(Quiz, id=int(quiz_id))
-    for element in range (1, len(myData)):
-        question = get_object_or_404(Question, question_id=int(myData[element]))
-        if (not question):
-            data['Error{}'.format(element)] = 'question with id({}) not found'.format(myData[element])
-        quiz.quiz_questions.add(question)
+# # 2
+# @api_view(['POST'])
+# @teacher_role
+# def appendQuestionsToQuiz(request):
+#     user = request.user
+#     quiz_id = request.data.get('quiz_id')
+#     quiz_data = request.data.get('quiz_data')
+#     teacher = get_object_or_404(Teacher, user=user)
+#     myData = quiz_data.split('&')
+#     quiz = get_object_or_404(Quiz, id=int(quiz_id))
+#     for element in range (1, len(myData)):
+#         question = get_object_or_404(Question, question_id=int(myData[element]))
+#         if (not question):
+#             data['Error{}'.format(element)] = 'question with id({}) not found'.format(myData[element])
+#         quiz.quiz_questions.add(question)
         
-    return Response({'response': 'success'})
+#     return Response({'response': 'success'})
 
 
 # 3
@@ -179,7 +182,7 @@ def listUnLaunchedQuiz(request):
 def detailQuiz(request, quiz_id):
     user = request.user
     teacher = get_object_or_404(Teacher, user=user)
-    quiz = get_object_or_404(Quiz, quiz_id=int(quiz_id))
+    quiz = get_object_or_404(Quiz, id=int(quiz_id))
     serializer = CreateNewQuiz(quiz)
     questions = quiz.quiz_questions.all()
     questions_serializer = CreateQuestion(questions, many=True)
@@ -315,6 +318,7 @@ def listNotTeacherQuestions(request):
 @teacher_role
 def filteration(request):
     user =request.user
+    teacher = get_object_or_404(Teacher, user=user)
     gradeID = request.data.get('gradeID')
     topicID = request.data.get('topicID')
     addedBy = request.data.get('addedBy')
@@ -322,5 +326,26 @@ def filteration(request):
     reviewed = request.data.get('reviewed')
     history = request.data.get('history')
     qtype = request.data.get('type')
-
-
+    questions = Question.objects.filter(question_grade=gradeID, question_subject=teacher.subject)
+    if topicID == 'all':
+        questions = questions
+    else:
+        questions = questions.filter(question_topic=topicID)
+    if addedBy == 'self':
+        questions = questions.filter(question_author=teacher)
+    elif addedBy == 'school':
+        questions = questions.exclude(question_author=teacher)
+    else:
+        questions = questions
+    if sortBy == 'date':
+        questions = questions.order_by('-question_creation_time')
+    else:
+        questions = questions
+    if qtype == 'MCQ':
+        questions = questions.filter(question_type='MCQ')
+    elif qtype == 'TR':
+        questions = questions.filter(question_type='TR')
+    else:
+        questions = questions
+    serializer = CreateQuestion(questions, many=True)
+    return Response({'data': serializer.data}, 200)
