@@ -1,0 +1,6 @@
+create json file contain username with school info + school subdomian >> to check user while login
+send email to user(forget password , activation)
+Quiz > student > views > line 34 and 42 (send object not list)
+
+
+login (username, password, role)
