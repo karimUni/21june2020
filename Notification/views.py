@@ -90,7 +90,8 @@ def list_students(request):
 @csrf_exempt
 # @student_role
 def list_teachers(request):
-    users = User.objects.filter(role='T')
+    # users = User.objects.filter(role='T')
+    users = User.objects.all()
     usernames = []
     for i in users:
         usernames.append(i.username)
