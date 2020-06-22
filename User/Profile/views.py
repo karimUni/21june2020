@@ -108,6 +108,8 @@ def update_profile(request):
     if request.method == 'PUT':
         __name = request.data.get('name')
         _name = __name.split(' ')
+        if len(_name) != 1:
+            return Response({'error': 'name must be two words at least'}, 403)
         data0 = {
             'phone_number': request.data.get('mobile'),
             'address': request.data.get('address'),

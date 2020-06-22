@@ -66,7 +66,7 @@ def send_feedback(request):
     send_mail('User FeedBack', 
     'User id {} with username {} : {} {}'.format(user.id, user.username, feedback, comment),
     settings.EMAIL_HOST_USER,
-    ['karim@unilearn.com.eg'],
+    ['feedback@unilearn.com.eg'],
     fail_silently=False)
 
     return HttpResponse('success')
