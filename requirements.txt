@@ -14,7 +14,7 @@ Pillow==7.1.2
 psycopg2==2.8.5
 psycopg2-binary==2.8.5
 pydotplus==2.0.2
-PyJWT==1.7.1
+PyJWT==2.4.0
 pyparsing==2.4.7
 pytz==2020.1
 six==1.15.0
